@@ -1,0 +1,71 @@
+#! /opt/anaconda3/bin/python
+
+import datetime as dt
+import time
+import subprocess
+
+from peano_benchmark import *
+
+def main():
+
+    print("""
+        Peano 4 Benchmark Experiment Generator
+    """)
+
+    default_args = dict()
+
+    default_experiment_dir = "/ddn/data/{user}/peano-benchmark-experiments"
+    default_peano_dir      = "/ddn/data/{user}/Peano"
+
+    default_args["experiment_root"] = default_experiment_dir
+    default_args["peano_root"]      = default_peano_dir
+    default_args["mode"]    = "release"
+    default_args["type"]    = "default"
+    default_args["cs"]      = "0.9"
+    default_args["dim"]     = 2
+    default_args["ps"]      = 10
+    default_args["et"]      = "0.000002"
+    default_args["j"]       = 8
+    default_args["cores"]   = 16
+    default_args["lib"]     = "libotter.so"
+    default_args["partition"]     = "par6.q"
+    default_args["time"]     = "00:30:00"
+
+    parser = make_parser(default_args)
+
+    args = dict()
+    args["timestamp"] = time.strftime("%Y-%m-%d-%H%M%S")
+    args_parsed = parser.parse_args()
+    args_parsed.root = args_parsed.root.format(user=args_parsed.user)
+    args_parsed.peano = args_parsed.peano.format(user=args_parsed.user)
+    for key, value in vars(args_parsed).items():
+        args[key] = str(value).replace("'", "")
+        print(f"{key:12} = {args[key]}")        
+
+    print("")
+
+    timestamp = time.strftime("%Y-%m-%d-%H%M%S")
+    args["experiment"], args["executable"] = get_experiment_name(args)
+    print(f"\n> Experiment: {args['experiment']}\n")
+
+    # Create remote folder for the experiment
+    print("> Creating remote experiment folder...")
+    create_remote_dir(args)
+
+    # Generate build script
+    print("> Generating build script...")
+    generate_build_script(args)
+
+    # Copy build script to remote, then execute
+    print("> Building experiment...")
+    build_result = build_experiment(args)
+    print(f"> Return code: {build_result}")
+
+    # Prepare submit.sh, copy and execute
+    if build_result == 0:
+        submit_experiment(args)
+    else:
+        raise RuntimeError("build failed")
+
+if __name__ == "__main__":
+    main()

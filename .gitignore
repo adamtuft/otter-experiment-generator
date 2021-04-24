@@ -1,0 +1,5 @@
+!templates/*
+build.sh
+submit.sh
+__pycache__
+
