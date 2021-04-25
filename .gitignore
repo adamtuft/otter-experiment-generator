@@ -1,5 +1,6 @@
 !templates/*
 build.sh
 submit.sh
+*.json
 __pycache__
 

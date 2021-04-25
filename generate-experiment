@@ -1,12 +1,18 @@
 #! /opt/anaconda3/bin/python
 
+import os
+import sys
 import datetime as dt
 import time
 import subprocess
+import json
 
 from peano_benchmark import *
 
 def main():
+    
+    base_dir = os.path.dirname(os.path.realpath(__file__))
+    os.chdir(base_dir)
 
     print("""
         Peano 4 Benchmark Experiment Generator
@@ -63,9 +69,19 @@ def main():
 
     # Prepare submit.sh, copy and execute
     if build_result == 0:
-        submit_experiment(args)
+        generate_submit_script(args)
+        if args_parsed.no_submit:
+            print("Stopped before submission to slurm")
+        else:
+            submit_experiment(args)
     else:
         raise RuntimeError("build failed")
+
+    # Save build attrib to easily-parsed format
+    with open("args.json", "w") as argsfile:
+        argsfile.write(json.dumps(args, indent=1))
+
+    scp(args["user"], f"{args['root']}/{args['experiment']}", "args.json")
 
 if __name__ == "__main__":
     main()

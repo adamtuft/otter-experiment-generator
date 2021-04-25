@@ -10,13 +10,15 @@ def make_parser(default_args):
     exp_args   = parser.add_argument_group("Experimental arguments")
     sbatch_args = parser.add_argument_group("SBATCH arguments")
 
-    parser.add_argument(
-        'user', type=ascii,
-        help='Hamilton username')
+    parser.add_argument('user', type=ascii, help='Hamilton username')
 
     exp_args.add_argument(
         '-l', '--lib', type=ascii, default=default_args['lib'], dest='lib',
         help='OMPT library to load at job start')
+
+    exp_args.add_argument(
+        '-ns', '--no-submit', action='store_true', dest='no_submit',
+        help='If specified, stop before submitting the job with sbatch')
 
     # Experiment args
     exp_args.add_argument(
@@ -44,8 +46,7 @@ def make_parser(default_args):
         help='Absolute size of each grid cell division')
      
     exp_args.add_argument(
-        '-d',  '--dim', type=int, default=default_args["dim"],
-        choices=[2,3],
+        '-d',  '--dim', type=int, default=default_args["dim"], choices=[2,3],
         help='Dimensions')
          
     exp_args.add_argument(
@@ -63,8 +64,7 @@ def make_parser(default_args):
         help='Number of cores for building')
 
     exp_args.add_argument(
-        '-x', '--postfix', type=ascii,
-        dest='postfix',
+        '-x', '--postfix', type=ascii, dest='postfix', default="",
         help='String to append to the experiment directory'
     )
 
@@ -101,7 +101,7 @@ def get_experiment_name(args):
 def create_remote_dir(args):
 
     # check that the root exists on Hamilton
-    sshcmd = """ssh hamilton '[[ -d "{}" ]] && echo 1'""".format(args["root"])
+    sshcmd = f"""ssh hamilton '[[ -d "{args["root"]}" ]] && echo 1'"""
     print(sshcmd)
     proc = subprocess.run(sshcmd, shell=True, capture_output=True, text=True)
     if proc.stdout.strip() == "":
@@ -150,7 +150,7 @@ def build_experiment(args):
     # as they all use the same build dirs
     return subprocess.run(cmd, shell=True).returncode
 
-def submit_experiment(args):
+def generate_submit_script(args):
 
     with open("templates/sbatch-submit.sh") as f:
         submit = f.read()
@@ -168,6 +168,8 @@ def submit_experiment(args):
         f.write(submit)
     
     scp(args['user'], f"{args['root']}/{args['experiment']}", "submit.sh")
+
+def submit_experiment(args):
 
     build_dir = f"{args['root']}/{args['experiment']}"
     cmd_remote = f"sbatch {build_dir}/submit.sh"

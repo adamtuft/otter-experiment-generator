@@ -21,6 +21,9 @@ export OMP_TOOL_LIBRARIES=/ddn/home/<USER>/dissertation/otter/lib/<LIB>
 # Otter environment variables
 export OTTER_TASK_TREE_OUTPUT="<ROOT>/<EXPERIMENT>/task-tree"
 export OTTER_TASK_TREE_FORMAT=dot
+export OTTER_TASK_TREE_NODEATTR=peano-tasks.csv
 
 cd <ROOT>/<EXPERIMENT>
 <ROOT>/<EXPERIMENT>/<EXE> 2>stderr.log 1>/dev/null
+
+dot -Tsvg -o $OTTER_TASK_TREE_OUTPUT-twopi.svg -Ktwopi $OTTER_TASK_TREE_OUTPUT.gv
