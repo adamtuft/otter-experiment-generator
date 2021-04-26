@@ -26,4 +26,4 @@ export OTTER_TASK_TREE_NODEATTR=peano-tasks.csv
 cd <ROOT>/<EXPERIMENT>
 <ROOT>/<EXPERIMENT>/<EXE> 2>stderr.log 1>/dev/null
 
-dot -Tsvg -o $OTTER_TASK_TREE_OUTPUT-twopi.svg -Ktwopi $OTTER_TASK_TREE_OUTPUT.gv
+dot -Tpdf -o $OTTER_TASK_TREE_OUTPUT.pdf -Kdot $OTTER_TASK_TREE_OUTPUT.gv
