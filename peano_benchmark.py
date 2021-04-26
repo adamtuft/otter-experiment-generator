@@ -10,10 +10,10 @@ def make_parser(default_args):
     exp_args   = parser.add_argument_group("Experimental arguments")
     sbatch_args = parser.add_argument_group("SBATCH arguments")
 
-    parser.add_argument('user', type=ascii, help='Hamilton username')
+    parser.add_argument('user', help='Hamilton username')
 
     exp_args.add_argument(
-        '-l', '--lib', type=ascii, default=default_args['lib'], dest='lib',
+        '-l', '--lib', default=default_args['lib'], dest='lib',
         help='OMPT library to load at job start')
 
     exp_args.add_argument(
@@ -22,26 +22,26 @@ def make_parser(default_args):
 
     # Experiment args
     exp_args.add_argument(
-        '-r', '--root', type=ascii, default=default_args["experiment_root"],
+        '-r', '--root', default=default_args["experiment_root"],
         help='The root directory for this Peano4 benchmark experiment')
     
     peano_args.add_argument(
-        '-p', '--peano', type=ascii, default=default_args["peano_root"],
+        '-p', '--peano', default=default_args["peano_root"],
         help='Root directory of ExaHyPE/Peano build')
     
     # Peano args
     exp_args.add_argument(
-        '-m',  '--mode', type=ascii, default=default_args["mode"],
+        '-m',  '--mode', default=default_args["mode"],
         choices=['release'],
         help='Build mode of the benchmark')
     
     exp_args.add_argument(
-        '-t',  '--type', type=ascii, default=default_args["type"],
-        choices=['default','default-ats','enclave','enclave-ats'],
+        '-t',  '--type', default=default_args["type"],
+        choices=["default",'default-ats','enclave','enclave-ats'],
         help='Selected Peano4 variant')
     
     exp_args.add_argument(
-        '-cs', '--cell-size', type=ascii, default=default_args["cs"],
+        '-cs', '--cell-size', default=default_args["cs"],
         dest='cellsize',
         help='Absolute size of each grid cell division')
      
@@ -54,7 +54,7 @@ def make_parser(default_args):
         help='Number of volumes (patches) per grid cell')
 
     exp_args.add_argument(
-        '-et', '--end-time', type=ascii, default=default_args["et"], 
+        '-et', '--end-time', default=default_args["et"], 
         dest='endtime',
         help='Benchmark end time (seconds)')
     
@@ -64,7 +64,7 @@ def make_parser(default_args):
         help='Number of cores for building')
 
     exp_args.add_argument(
-        '-x', '--postfix', type=ascii, dest='postfix', default="",
+        '-x', '--postfix', dest='postfix', default="",
         help='String to append to the experiment directory'
     )
 
@@ -77,14 +77,14 @@ def make_parser(default_args):
     )
         
     sbatch_args.add_argument(
-        '-par', '--partition', type=ascii, default=default_args["partition"],
+        '-par', '--partition', default=default_args["partition"],
         dest='partition',
         choices=["par6.q", "par7.q"],
         help='Partition to submit job to'
     )
         
     sbatch_args.add_argument(
-        '-T', '--time', type=ascii, default=default_args["time"],
+        '-T', '--time', default=default_args["time"],
         dest='time',
         help='Wall-clock time limit for job [hh:mm:ss]'
     )
