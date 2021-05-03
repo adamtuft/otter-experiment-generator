@@ -19,11 +19,12 @@ export OMP_NUM_THREADS=<CORES>
 export OMP_TOOL_LIBRARIES=/ddn/home/<USER>/dissertation/otter/lib/<LIB>
 
 # Otter environment variables
-export OTTER_TASK_TREE_OUTPUT="<ROOT>/<EXPERIMENT>/task-tree"
-export OTTER_TASK_TREE_FORMAT=dot
-export OTTER_TASK_TREE_NODEATTR=peano-tasks.csv
+export OTTER_TASK_GRAPH_OUTPUT="<ROOT>/<EXPERIMENT>/task-graph"
+export OTTER_TASK_GRAPH_FORMAT=dot
+export OTTER_TASK_GRAPH_NODEATTR=peano-tasks.json
+export OTTER_APPEND_HOSTNAME
 
 cd <ROOT>/<EXPERIMENT>
 <ROOT>/<EXPERIMENT>/<EXE> 2>stderr.log 1>/dev/null
 
-dot -Tpdf -o $OTTER_TASK_TREE_OUTPUT.pdf -Kdot $OTTER_TASK_TREE_OUTPUT.gv
+dot -Tpdf -o $OTTER_TASK_GRAPH_OUTPUT.pdf -Kdot $OTTER_TASK_GRAPH_OUTPUT.gv
